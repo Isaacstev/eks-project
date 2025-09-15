@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello from the Frontend</title>
+</head>
+<body>
+    <h1>Hello from the Frontend!</h1>
+    <p>Message from the backend: <span id="backend-message"></span></p>
+
+    <script>
+        fetch('http://localhost:5000')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('backend-message').innerText = data;
+            });
+    </script>
+</body>
+</html>
+
