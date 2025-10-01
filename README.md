@@ -5,6 +5,7 @@ This project demonstrates a complete DevOps workflow for deploying a multi-tier 
 ## 🏗️ Architecture Overview
 
 The project consists of:
+
 - **Frontend**: Nginx-served static HTML/JS application
 - **Backend**: Python Flask API server
 - **Infrastructure**: Kubernetes cluster (can be deployed on AWS EKS or locally)
@@ -52,17 +53,20 @@ eks-project/
 ## 🚀 Key Features
 
 ### 1. Containerization
+
 - Dockerized frontend and backend applications
 - Multi-stage builds for optimization
 - Lightweight base images (Alpine Linux)
 
 ### 2. Infrastructure as Code (Terraform)
+
 - Complete AWS EKS cluster setup
 - VPC, subnets, and security groups
 - IAM roles and policies
 - Network routing and internet gateway
 
 ### 3. Kubernetes Orchestration
+
 - Deployments with replica sets
 - Services for internal communication
 - Ingress for external access
@@ -70,6 +74,7 @@ eks-project/
 - Resource requests and limits
 
 ### 4. CI/CD Pipeline
+
 - Automated builds on code changes
 - Docker image building and pushing to registry
 - Kubernetes manifest updates
@@ -77,12 +82,14 @@ eks-project/
 - Branch protection and PR workflows
 
 ### 5. Monitoring & Observability
+
 - **Prometheus**: Metrics collection and alerting
 - **Grafana**: Dashboard visualization
 - Service discovery and scraping configuration
 - Custom metrics and alerts
 
 ### 6. Centralized Logging
+
 - **Elasticsearch**: Log storage and indexing
 - **Kibana**: Log visualization and search
 - Structured logging across services
@@ -90,16 +97,19 @@ eks-project/
 ### 7. Advanced Deployment Strategies
 
 #### Horizontal Pod Autoscaler (HPA)
+
 - CPU and memory-based scaling
 - Custom scaling policies
 - Stabilization windows for smooth scaling
 
 #### Secrets Management
+
 - Kubernetes Secrets for sensitive data
 - ConfigMaps for application configuration
 - Base64 encoding and secure storage
 
 #### Canary Deployments
+
 - Traffic splitting between versions
 - Header-based routing for testing
 - Gradual rollout strategy
@@ -107,6 +117,7 @@ eks-project/
 ## 🛠️ Local Development Setup
 
 ### Prerequisites
+
 - Docker Desktop with Kubernetes enabled
 - kubectl configured
 - Git for version control
@@ -114,40 +125,44 @@ eks-project/
 ### Quick Start
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/your-username/eks-project.git
    cd eks-project
    ```
 
 2. **Build Docker images**:
+
    ```bash
    # Build backend
    docker build -t eks-project-backend:latest ./backend
-   
-   # Build frontend  
+
+   # Build frontend
    docker build -t eks-project-frontend:latest ./frontend
    ```
 
 3. **Deploy to Kubernetes**:
+
    ```bash
    # Create namespace
    kubectl apply -f k8s/namespace.yaml
-   
+
    # Deploy applications
    kubectl apply -f k8s/
-   
+
    # Deploy monitoring
    kubectl apply -f monitoring/
-   
+
    # Deploy logging
    kubectl apply -f logging/
    ```
 
 4. **Access the application**:
+
    ```bash
    # Get service URLs
    kubectl get services -n eks-project
-   
+
    # Port forward to access locally
    kubectl port-forward -n eks-project svc/frontend-service 8080:80
    kubectl port-forward -n eks-project svc/grafana-service 3000:3000
@@ -156,6 +171,7 @@ eks-project/
 ## 🔧 Configuration
 
 ### CI/CD Setup
+
 1. Fork this repository
 2. Set up Docker Hub account and create repository
 3. Add GitHub secrets:
@@ -164,6 +180,7 @@ eks-project/
 4. Push changes to trigger pipeline
 
 ### Monitoring Access
+
 - **Grafana**: http://localhost:3000 (admin/admin123)
 - **Prometheus**: http://localhost:9090
 - **Kibana**: http://localhost:5601
@@ -171,12 +188,14 @@ eks-project/
 ## 📊 Monitoring & Alerting
 
 The monitoring stack includes:
+
 - Application metrics (request rate, response time, errors)
 - Infrastructure metrics (CPU, memory, disk, network)
 - Kubernetes cluster metrics (pod status, resource usage)
 - Custom business metrics
 
 ### Sample Grafana Dashboards
+
 - Application Performance Dashboard
 - Kubernetes Cluster Overview
 - Resource Utilization Trends
@@ -193,6 +212,7 @@ The monitoring stack includes:
 ## 🚀 Production Deployment
 
 ### AWS EKS Deployment
+
 ```bash
 # Initialize Terraform
 cd terraform
@@ -206,6 +226,7 @@ terraform apply
 ```
 
 ### Post-deployment Steps
+
 1. Configure kubectl for EKS cluster
 2. Update image registry URLs in manifests
 3. Set up DNS records for ingress
@@ -215,11 +236,13 @@ terraform apply
 ## 📈 Scaling & Performance
 
 ### Horizontal Scaling
+
 - HPA configured for both frontend and backend
 - Scales based on CPU and memory utilization
 - Custom metrics scaling available
 
 ### Vertical Scaling
+
 - Resource requests and limits configured
 - Automatic resource recommendation available
 - Node autoscaling for cluster expansion
@@ -227,6 +250,7 @@ terraform apply
 ## 🧪 Testing
 
 ### Local Testing
+
 ```bash
 # Test backend
 curl http://localhost:5000
@@ -240,6 +264,7 @@ kubectl describe pod <pod-name> -n eks-project
 ```
 
 ### Load Testing
+
 - Use tools like Apache Bench, JMeter, or k6
 - Monitor scaling behavior during load tests
 - Verify monitoring and alerting functionality
@@ -265,5 +290,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [GitHub Actions](https://docs.github.com/en/actions)
 
 ---
-
-**Built with ❤️ for learning and demonstration purposes**
