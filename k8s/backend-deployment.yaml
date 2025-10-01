@@ -22,6 +22,14 @@ spec:
         env:
         - name: FLASK_ENV
           value: "production"
+        # Resource requests and limits for HPA
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
 ---
 apiVersion: v1
 kind: Service

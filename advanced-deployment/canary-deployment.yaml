@@ -1,0 +1,80 @@
+# Canary deployment for backend service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-canary
+  namespace: eks-project
+  labels:
+    app: backend
+    version: canary
+spec:
+  replicas: 1  # Start with 1 replica for testing
+  selector:
+    matchLabels:
+      app: backend
+      version: canary
+  template:
+    metadata:
+      labels:
+        app: backend
+        version: canary
+    spec:
+      containers:
+      - name: backend
+        image: eks-project-backend:canary  # New version
+        ports:
+        - containerPort: 5000
+        env:
+        - name: VERSION
+          value: "canary"
+        - name: FLASK_ENV
+          value: "production"
+        # Resource requests and limits for HPA
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+---
+# Service configuration to split traffic between stable and canary
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service-canary
+  namespace: eks-project
+spec:
+  selector:
+    app: backend
+    # This selector will match both stable and canary versions
+    # Traffic splitting would be handled by ingress or service mesh
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+---
+# Ingress configuration for canary testing
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend-canary-ingress
+  namespace: eks-project
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10"  # 10% of traffic goes to canary
+    nginx.ingress.kubernetes.io/canary-by-header: "canary"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "true"
+spec:
+  rules:
+  - host: eks-project.local
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service-canary
+            port:
+              number: 5000
