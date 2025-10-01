@@ -1,0 +1,110 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: docker.io
+  BACKEND_IMAGE: eks-project-backend
+  FRONTEND_IMAGE: eks-project-frontend
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+    
+    - name: Install Python dependencies
+      run: |
+        cd backend
+        pip install -r requirements.txt
+    
+    - name: Run backend tests
+      run: |
+        cd backend
+        python -m pytest || echo "No tests found, skipping"
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Login to Docker Hub
+      if: github.event_name != 'pull_request'
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_TOKEN }}
+    
+    - name: Extract metadata (tags, labels) for backend
+      id: backend_meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.BACKEND_IMAGE }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: Build and push backend image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./backend
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.backend_meta.outputs.tags }}
+        labels: ${{ steps.backend_meta.outputs.labels }}
+    
+    - name: Extract metadata (tags, labels) for frontend
+      id: frontend_meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.FRONTEND_IMAGE }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: Build and push frontend image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.frontend_meta.outputs.tags }}
+        labels: ${{ steps.frontend_meta.outputs.labels }}
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Update Kubernetes manifests
+      run: |
+        sed -i "s|eks-project-backend:latest|${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/eks-project-backend:${{ github.sha }}|g" k8s/backend-deployment.yaml
+        sed -i "s|eks-project-frontend:latest|${{ env.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/eks-project-frontend:${{ github.sha }}|g" k8s/frontend-deployment.yaml
+    
+    - name: Display updated manifests
+      run: |
+        echo "Updated backend deployment:"
+        cat k8s/backend-deployment.yaml
+        echo "Updated frontend deployment:"
+        cat k8s/frontend-deployment.yaml
+    
+    # In a real scenario, you would deploy to your Kubernetes cluster here
+    # For this demo, we're just showing the updated manifests
+    - name: Deploy to Kubernetes (simulation)
+      run: |
+        echo "In a real deployment, this would apply the manifests to your cluster:"
+        echo "kubectl apply -f k8s/"

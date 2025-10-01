@@ -8,7 +8,7 @@
     <p>Message from the backend: <span id="backend-message"></span></p>
 
     <script>
-        fetch('http://localhost:5000')
+        fetch('http://backend-service:5000')
             .then(response => response.text())
             .then(data => {
                 document.getElementById('backend-message').innerText = data;
