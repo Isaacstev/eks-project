@@ -1,325 +1,349 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>EKS Project Demo - Multi-Tier Application</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        .card {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px 0;
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        .card h3 {
-            margin-bottom: 15px;
-            color: #f0f8ff;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
-        .stat-item {
-            text-align: center;
-            padding: 15px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-        }
-        .stat-value {
-            font-size: 2em;
-            font-weight: bold;
-            color: #ffd700;
-        }
-        .visitor-form {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-            flex-wrap: wrap;
-        }
-        input, button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-        input {
-            flex: 1;
-            min-width: 200px;
-            background: rgba(255,255,255,0.9);
-            color: #333;
-        }
-        button {
-            background: #4CAF50;
-            color: white;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover {
-            background: #45a049;
-        }
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-        .error {
-            color: #ff6b6b;
-            background: rgba(255,107,107,0.1);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        .success {
-            color: #4CAF50;
-            background: rgba(76,175,80,0.1);
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-        }
-        .endpoints {
-            font-family: monospace;
-            font-size: 0.9em;
-            line-height: 1.5;
-        }
-        .visitors-list {
-            max-height: 200px;
-            overflow-y: auto;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            padding: 10px;
-        }
-        .visitor-item {
-            padding: 5px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        min-height: 100vh;
+        padding: 20px;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2.5em;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        margin: 20px 0;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+      .card h3 {
+        margin-bottom: 15px;
+        color: #f0f8ff;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+      .stat-item {
+        text-align: center;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+      }
+      .stat-value {
+        font-size: 2em;
+        font-weight: bold;
+        color: #ffd700;
+      }
+      .visitor-form {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+      input,
+      button {
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+      input {
+        flex: 1;
+        min-width: 200px;
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+      }
+      button {
+        background: #4caf50;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+      button:hover {
+        background: #45a049;
+      }
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .error {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+      .success {
+        color: #4caf50;
+        background: rgba(76, 175, 80, 0.1);
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+      }
+      .endpoints {
+        font-family: monospace;
+        font-size: 0.9em;
+        line-height: 1.5;
+      }
+      .visitors-list {
+        max-height: 200px;
+        overflow-y: auto;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        padding: 10px;
+      }
+      .visitor-item {
+        padding: 5px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>🚀 EKS Project Demo</h1>
-        
-        <div class="card">
-            <h3>📡 Backend Connection</h3>
-            <p>Status: <span id="connection-status">Connecting...</span></p>
-            <p>Message: <span id="backend-message">Loading...</span></p>
-        </div>
+      <h1>🚀 EKS Project Demo</h1>
 
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-value" id="total-visitors">-</div>
-                <div>Total Visitors</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="unique-visitors">-</div>
-                <div>Unique Visitors</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" id="server-health">-</div>
-                <div>Server Health</div>
-            </div>
-        </div>
+      <div class="card">
+        <h3>📡 Backend Connection</h3>
+        <p>Status: <span id="connection-status">Connecting...</span></p>
+        <p>Message: <span id="backend-message">Loading...</span></p>
+      </div>
 
-        <div class="card">
-            <h3>👋 Add Yourself as a Visitor</h3>
-            <div class="visitor-form">
-                <input type="text" id="visitor-name" placeholder="Enter your name (optional)">
-                <button onclick="addVisitor()">Add Visitor</button>
-            </div>
-            <div id="visitor-message"></div>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value" id="total-visitors">-</div>
+          <div>Total Visitors</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-value" id="unique-visitors">-</div>
+          <div>Unique Visitors</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="server-health">-</div>
+          <div>Server Health</div>
+        </div>
+      </div>
 
-        <div class="card">
-            <h3>👥 Recent Visitors</h3>
-            <div id="visitors-list" class="visitors-list">
-                <p>Loading visitors...</p>
-            </div>
+      <div class="card">
+        <h3>👋 Add Yourself as a Visitor</h3>
+        <div class="visitor-form">
+          <input
+            type="text"
+            id="visitor-name"
+            placeholder="Enter your name (optional)"
+          />
+          <button onclick="addVisitor()">Add Visitor</button>
         </div>
+        <div id="visitor-message"></div>
+      </div>
 
-        <div class="card">
-            <h3>🔌 Available API Endpoints</h3>
-            <div id="api-endpoints" class="endpoints">
-                Loading endpoints...
-            </div>
+      <div class="card">
+        <h3>👥 Recent Visitors</h3>
+        <div id="visitors-list" class="visitors-list">
+          <p>Loading visitors...</p>
         </div>
+      </div>
+
+      <div class="card">
+        <h3>🔌 Available API Endpoints</h3>
+        <div id="api-endpoints" class="endpoints">Loading endpoints...</div>
+      </div>
     </div>
 
     <script>
-        const API_BASE = 'http://localhost:5000';
-        let refreshInterval;
+      const API_BASE = "http://localhost:5000";
+      let refreshInterval;
 
-        // Initialize the application
-        async function init() {
-            await loadInitialData();
-            startAutoRefresh();
+      // Initialize the application
+      async function init() {
+        await loadInitialData();
+        startAutoRefresh();
+      }
+
+      // Load all initial data
+      async function loadInitialData() {
+        await Promise.all([
+          checkConnection(),
+          loadStats(),
+          loadVisitors(),
+          loadEndpoints(),
+        ]);
+      }
+
+      // Check backend connection
+      async function checkConnection() {
+        try {
+          const response = await fetch(`${API_BASE}/`);
+          const data = await response.text();
+
+          document.getElementById("connection-status").textContent =
+            "🟢 Connected";
+          document.getElementById("backend-message").textContent = data;
+        } catch (error) {
+          document.getElementById("connection-status").textContent =
+            "🔴 Disconnected";
+          document.getElementById("backend-message").textContent =
+            "Failed to connect to backend";
+          console.error("Connection error:", error);
         }
+      }
 
-        // Load all initial data
-        async function loadInitialData() {
-            await Promise.all([
-                checkConnection(),
-                loadStats(),
-                loadVisitors(),
-                loadEndpoints()
-            ]);
+      // Load visitor statistics
+      async function loadStats() {
+        try {
+          const [healthResponse, statsResponse] = await Promise.all([
+            fetch(`${API_BASE}/api/health`),
+            fetch(`${API_BASE}/api/stats`),
+          ]);
+
+          const health = await healthResponse.json();
+          const stats = await statsResponse.json();
+
+          document.getElementById("total-visitors").textContent =
+            stats.total_requests || 0;
+          document.getElementById("unique-visitors").textContent =
+            stats.unique_visitors || 0;
+          document.getElementById("server-health").textContent =
+            health.status === "healthy" ? "🟢" : "🔴";
+        } catch (error) {
+          console.error("Failed to load stats:", error);
+          document.getElementById("server-health").textContent = "🔴";
         }
+      }
 
-        // Check backend connection
-        async function checkConnection() {
-            try {
-                const response = await fetch(`${API_BASE}/`);
-                const data = await response.text();
-                
-                document.getElementById('connection-status').textContent = '🟢 Connected';
-                document.getElementById('backend-message').textContent = data;
-            } catch (error) {
-                document.getElementById('connection-status').textContent = '🔴 Disconnected';
-                document.getElementById('backend-message').textContent = 'Failed to connect to backend';
-                console.error('Connection error:', error);
-            }
-        }
+      // Load recent visitors
+      async function loadVisitors() {
+        try {
+          const response = await fetch(`${API_BASE}/api/visitors`);
+          const data = await response.json();
 
-        // Load visitor statistics
-        async function loadStats() {
-            try {
-                const [healthResponse, statsResponse] = await Promise.all([
-                    fetch(`${API_BASE}/api/health`),
-                    fetch(`${API_BASE}/api/stats`)
-                ]);
-                
-                const health = await healthResponse.json();
-                const stats = await statsResponse.json();
-                
-                document.getElementById('total-visitors').textContent = stats.total_requests || 0;
-                document.getElementById('unique-visitors').textContent = stats.unique_visitors || 0;
-                document.getElementById('server-health').textContent = health.status === 'healthy' ? '🟢' : '🔴';
-            } catch (error) {
-                console.error('Failed to load stats:', error);
-                document.getElementById('server-health').textContent = '🔴';
-            }
-        }
-
-        // Load recent visitors
-        async function loadVisitors() {
-            try {
-                const response = await fetch(`${API_BASE}/api/visitors`);
-                const data = await response.json();
-                
-                const visitorsList = document.getElementById('visitors-list');
-                if (data.recent_visitors && data.recent_visitors.length > 0) {
-                    visitorsList.innerHTML = data.recent_visitors
-                        .reverse()
-                        .map(visitor => `
+          const visitorsList = document.getElementById("visitors-list");
+          if (data.recent_visitors && data.recent_visitors.length > 0) {
+            visitorsList.innerHTML = data.recent_visitors
+              .reverse()
+              .map(
+                (visitor) => `
                             <div class="visitor-item">
                                 <strong>${visitor.name}</strong> 
-                                <small>(${new Date(visitor.timestamp).toLocaleTimeString()})</small>
+                                <small>(${new Date(
+                                  visitor.timestamp
+                                ).toLocaleTimeString()})</small>
                             </div>
-                        `).join('');
-                } else {
-                    visitorsList.innerHTML = '<p>No visitors yet. Be the first!</p>';
-                }
-            } catch (error) {
-                document.getElementById('visitors-list').innerHTML = '<p>Failed to load visitors</p>';
-                console.error('Failed to load visitors:', error);
+                        `
+              )
+              .join("");
+          } else {
+            visitorsList.innerHTML = "<p>No visitors yet. Be the first!</p>";
+          }
+        } catch (error) {
+          document.getElementById("visitors-list").innerHTML =
+            "<p>Failed to load visitors</p>";
+          console.error("Failed to load visitors:", error);
+        }
+      }
+
+      // Load API endpoints
+      async function loadEndpoints() {
+        try {
+          const response = await fetch(`${API_BASE}/api/stats`);
+          const data = await response.json();
+
+          if (data.endpoints) {
+            const endpointsHtml = Object.entries(data.endpoints)
+              .map(
+                ([endpoint, description]) =>
+                  `<div>${endpoint} - ${description}</div>`
+              )
+              .join("");
+            document.getElementById("api-endpoints").innerHTML = endpointsHtml;
+          }
+        } catch (error) {
+          document.getElementById("api-endpoints").innerHTML =
+            "Failed to load endpoints";
+          console.error("Failed to load endpoints:", error);
+        }
+      }
+
+      // Add a new visitor
+      async function addVisitor() {
+        const nameInput = document.getElementById("visitor-name");
+        const messageDiv = document.getElementById("visitor-message");
+        const name = nameInput.value.trim();
+
+        try {
+          messageDiv.innerHTML = "";
+          const response = await fetch(`${API_BASE}/api/visitors`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ name: name || undefined }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            messageDiv.innerHTML = `<div class="success">${data.message}</div>`;
+            nameInput.value = "";
+            // Refresh data
+            await loadStats();
+            await loadVisitors();
+          } else {
+            messageDiv.innerHTML = `<div class="error">Failed to add visitor</div>`;
+          }
+        } catch (error) {
+          messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+          console.error("Failed to add visitor:", error);
+        }
+      }
+
+      // Auto-refresh data every 10 seconds
+      function startAutoRefresh() {
+        refreshInterval = setInterval(async () => {
+          await loadStats();
+          await loadVisitors();
+        }, 10000);
+      }
+
+      // Allow Enter key to add visitor
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .getElementById("visitor-name")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              addVisitor();
             }
-        }
+          });
+      });
 
-        // Load API endpoints
-        async function loadEndpoints() {
-            try {
-                const response = await fetch(`${API_BASE}/api/stats`);
-                const data = await response.json();
-                
-                if (data.endpoints) {
-                    const endpointsHtml = Object.entries(data.endpoints)
-                        .map(([endpoint, description]) => 
-                            `<div>${endpoint} - ${description}</div>`
-                        ).join('');
-                    document.getElementById('api-endpoints').innerHTML = endpointsHtml;
-                }
-            } catch (error) {
-                document.getElementById('api-endpoints').innerHTML = 'Failed to load endpoints';
-                console.error('Failed to load endpoints:', error);
-            }
-        }
-
-        // Add a new visitor
-        async function addVisitor() {
-            const nameInput = document.getElementById('visitor-name');
-            const messageDiv = document.getElementById('visitor-message');
-            const name = nameInput.value.trim();
-            
-            try {
-                messageDiv.innerHTML = '';
-                const response = await fetch(`${API_BASE}/api/visitors`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name: name || undefined })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    messageDiv.innerHTML = `<div class="success">${data.message}</div>`;
-                    nameInput.value = '';
-                    // Refresh data
-                    await loadStats();
-                    await loadVisitors();
-                } else {
-                    messageDiv.innerHTML = `<div class="error">Failed to add visitor</div>`;
-                }
-            } catch (error) {
-                messageDiv.innerHTML = `<div class="error">Error: ${error.message}</div>`;
-                console.error('Failed to add visitor:', error);
-            }
-        }
-
-        // Auto-refresh data every 10 seconds
-        function startAutoRefresh() {
-            refreshInterval = setInterval(async () => {
-                await loadStats();
-                await loadVisitors();
-            }, 10000);
-        }
-
-        // Allow Enter key to add visitor
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('visitor-name').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    addVisitor();
-                }
-            });
-        });
-
-        // Initialize when page loads
-        window.addEventListener('load', init);
+      // Initialize when page loads
+      window.addEventListener("load", init);
     </script>
-</body>
+  </body>
 </html>
-
